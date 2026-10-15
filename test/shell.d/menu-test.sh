@@ -107,11 +107,15 @@ assert(menu.searchScore(merged.items, entry, 'theme') < menu.searchScore(merged.
 const xhs = menu.normalizeItem('apps.rednote', { label: '小红书' })
 const douyin = menu.normalizeItem('apps.douyin', { label: '抖音' })
 const wechat = menu.normalizeItem('apps.wechat-universal', { label: '微信 Universal' })
-assertEqual(menu.pinyinInitials('小红书'), 'xhs', 'menu computes pinyin initials for Chinese names')
 assert(menu.matchesQuery(xhs, 'xhs', true), 'menu finds Chinese app names by pinyin initials')
 assert(menu.matchesQuery(douyin, 'dy', true), 'menu finds Chinese app names by pinyin initials')
 assert(menu.matchesQuery(wechat, 'wx', true), 'menu finds mixed Chinese labels by pinyin initials')
 assert(!menu.matchesQuery(xhs, 'wx', true), 'menu rejects unrelated pinyin initials')
+const chat = menu.normalizeItem('apps.wechat', { label: '微信', aliases: ['聊天'] })
+assert(!menu.matchesQuery(chat, 'xl', true), 'menu pinyin initials do not span a label and its aliases')
+assert(menu.matchesQuery(chat, 'lt', true), 'menu finds a Chinese alias by its own initials')
+const settings = menu.normalizeItem('setup', { label: '设置' })
+assert(menu.matchesQuery(settings, 'sz', true), 'a translated menu row is found by its pinyin initials')
 
 assertDeepEqual(
   menu.displayRow(merged.items, merged.itemOrder, {}, {}, entry, 'Style', 12, 'search'),
