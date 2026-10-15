@@ -82,7 +82,8 @@ const chineseEntries = [
 
 const menuModel = requireFromRoot('shell/plugins/menu/MenuModel.js')
 assertEqual(menuModel.pinyinInitials('小红书'), 'xhs', 'search computes pinyin initials for Chinese names')
-assertEqual(menuModel.pinyinFieldInitials(['微信', '', '聊天']), 'wx lt', 'pinyin initials stay within their field')
+const fieldRuns = menuModel.pinyinFieldInitials(['微信', '', '聊天']).split(' ')
+assert(fieldRuns.includes('wx') && fieldRuns.includes('lt') && !fieldRuns.some(run => run.length > 2), 'pinyin initials stay within their field')
 
 for (const [query, name] of [['xhs', '小红书'], ['dy', '抖音'], ['wx', '微信 Universal']]) {
   const hits = search.sortedEntries(chineseEntries, query).map(row => search.entryName(row.entry))

@@ -116,6 +116,15 @@ assert(!menu.matchesQuery(chat, 'xl', true), 'menu pinyin initials do not span a
 assert(menu.matchesQuery(chat, 'lt', true), 'menu finds a Chinese alias by its own initials')
 const settings = menu.normalizeItem('setup', { label: '设置' })
 assert(menu.matchesQuery(settings, 'sz', true), 'a translated menu row is found by its pinyin initials')
+const reboot = menu.normalizeItem('system.reboot', { label: '重启' })
+assert(menu.matchesQuery(reboot, 'cq', true), 'a polyphonic character is found by the reading the word uses')
+assert(menu.matchesQuery(reboot, 'zq', true), 'a polyphonic character keeps its most common reading')
+assertDeepEqual(menu.pinyinVariants('音乐'), ['yl', 'yy'], 'a polyphonic character adds its other readings after the common one')
+const polyphonic = menu.pinyinVariants('重重重重重重')
+assertEqual(polyphonic.length, 16, 'readings are capped at 16 runs')
+assertEqual(polyphonic[0], 'zzzzzz', 'the common reading stays first')
+assert(polyphonic.includes('cccczz'), 'other readings survive up to the cap')
+assert(polyphonic.every(run => run.endsWith('zz')), 'characters past the cap keep their common reading')
 
 assertDeepEqual(
   menu.displayRow(merged.items, merged.itemOrder, {}, {}, entry, 'Style', 12, 'search'),
